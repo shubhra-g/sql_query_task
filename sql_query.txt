@@ -1,0 +1,78 @@
+use fidelity;
+create table employee(
+emp_id int primary key,
+first_name varchar(100),
+last_name varchar(100)
+);
+
+create table manager (
+manager_id int primary key auto_increment,
+manager_name varchar(50),
+emp_id int,
+foreign key(emp_id) references employee(emp_id)
+);
+
+insert into employee(emp_id,first_name,last_name) values
+(1,'shubhra','gupta'),
+(2,'ankit','prakash'),
+(3,'sarthak','gupta'),
+(4,'siya','goyal');
+
+
+
+insert into manager(manager_name,emp_id) values
+('akshay',1),
+('akshay',2),
+('abhiskey',3),
+('abhishek',4);
+
+-- all the employee under each manager
+select m.manager_name,e.emp_id,e.first_name,e.last_name
+from manager m 
+join employee e on m.emp_id=e.emp_id
+order by m.manager_name;
+
+-- total employee under any manager
+select m.manager_name,count(e.emp_id) as no_of_emp
+from manager m 
+join employee e on m.emp_id=e.emp_id
+group by m.manager_name;
+
+
+--  get all the manager details
+select * from manager;
+
+
+-- find any employee is there till not assign as any manager
+
+delete from manager
+where emp_id in (3,4);
+
+
+select * from employee 
+left join manager m on employee.emp_id=m.emp_id
+where m.manager_name is null;
+
+
+-- create a function to get fullname of employee
+
+
+delimiter //
+create function get_ful_name(emp_id int)
+returns varchar(200)
+deterministic
+return (
+
+select concat(first_name ,' ' ,last_name) 
+from employee where emp_id=emp_id
+);
+
+//
+delimiter ;
+select get_ful_name(2) as fn;
+
+
+
+ 
+
+
